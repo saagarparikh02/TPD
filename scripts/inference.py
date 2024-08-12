@@ -15,7 +15,7 @@ from torch import autocast
 from contextlib import nullcontext
 import torchvision
 from typing import List
-sys.path[0] = "/home/yx/code/virtual_tryon/TPD"
+sys.path[0] = "/home/ubuntu/TPD"
 print(sys.path)
 from ldm.util import instantiate_from_config
 from ldm.models.diffusion.ddim import DDIMSampler
@@ -360,6 +360,7 @@ def main():
                     torch.cuda.empty_cache()
                     
                     image_name = batch["image_name"]
+                    cloth_name = batch["cloth_name"]
 
                     person = batch["GT_image"]
                     garment_mask = batch["GT_mask"]
@@ -436,43 +437,43 @@ def main():
                             grid_first_stage = make_grid(grid_first_stage)
                             grid_first_stage = 255. * rearrange(grid_first_stage, 'c h w -> h w c').cpu().numpy()
                             grid_first_stage = Image.fromarray(grid_first_stage.astype(np.uint8))
-                            grid_first_stage.save(os.path.join(first_stage_grid_path, image_name[i][:-4]+'_grid.jpg'))
+                            grid_first_stage.save(os.path.join(first_stage_grid_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + '_grid.jpg'))
 
 
                             result_image_first_stage_blended_numpy = 255. * rearrange(result_image_first_stage_blended[i], 'c h w -> h w c').cpu().numpy()
                             result_image_first_stage_blended_img = Image.fromarray(result_image_first_stage_blended_numpy[:,:(opt.W//2),:].astype(np.uint8))
-                            result_image_first_stage_blended_img.save(os.path.join(first_stage_result_path, image_name[i][:-4]+".jpg"))
+                            result_image_first_stage_blended_img.save(os.path.join(first_stage_result_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + ".jpg"))
 
 
                             person_numpy=255.*rearrange(un_norm(person[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                             person_img = Image.fromarray(person_numpy.astype(np.uint8))
-                            person_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4]+"_person.jpg"))
+                            person_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_person.jpg"))
                                 
 
                             ref_img=255.*rearrange(un_norm(ref_list[0][i]).cpu(), 'c h w -> h w c').cpu().numpy()
                             ref_img = Image.fromarray(ref_img.astype(np.uint8))
-                            ref_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4]+"_garment.jpg"))
+                            ref_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_garment.jpg"))
 
 
                             bbox_inpaint_person_numpy=255.*rearrange(un_norm(bbox_inpaint_person[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                             bbox_inpaint_person_img = Image.fromarray(bbox_inpaint_person_numpy.astype(np.uint8))
-                            bbox_inpaint_person_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4]+"_bbox_inpaint.jpg"))
+                            bbox_inpaint_person_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_bbox_inpaint.jpg"))
 
 
                             bbox_mask_numpy=255.*rearrange(un_norm(bbox_mask[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                             bbox_mask_numpy= cv2.cvtColor(bbox_mask_numpy,cv2.COLOR_GRAY2RGB)
                             bbox_mask_img = Image.fromarray(bbox_mask_numpy.astype(np.uint8))
-                            bbox_mask_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4]+"_bbox_mask.jpg"))
+                            bbox_mask_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_bbox_mask.jpg"))
 
 
                             posemap_numpy=255.*rearrange(un_norm(posemap[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                             posemap_img = Image.fromarray(posemap_numpy.astype(np.uint8))
-                            posemap_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4]+"_posemap.jpg"))
+                            posemap_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_posemap.jpg"))
 
 
                             densepose_numpy=255.*rearrange(un_norm(densepose[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                             densepose_img = Image.fromarray(densepose_numpy.astype(np.uint8))
-                            densepose_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4]+"_densepose.jpg"))
+                            densepose_img.save(os.path.join(first_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_densepose.jpg"))
 
 
 
@@ -574,38 +575,38 @@ def main():
                                 grid_second_stage = make_grid(grid_second_stage)
                                 grid_second_stage = 255. * rearrange(grid_second_stage, 'c h w -> h w c').cpu().numpy()
                                 grid_second_stage = Image.fromarray(grid_second_stage.astype(np.uint8))
-                                grid_second_stage.save(os.path.join(second_stage_grid_path, image_name[i][:-4]+'_grid.jpg'))
+                                grid_second_stage.save(os.path.join(second_stage_grid_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + '_grid.jpg'))
 
 
                                 result_image_second_stage_blended_numpy = 255. * rearrange(result_image_second_stage_blended[i], 'c h w -> h w c').cpu().numpy()
                                 result_image_second_stage_blended_img = Image.fromarray(result_image_second_stage_blended_numpy[:,:(opt.W//2),:].astype(np.uint8))
-                                result_image_second_stage_blended_img.save(os.path.join(second_stage_result_path, image_name[i][:-4]+".jpg"))
+                                result_image_second_stage_blended_img.save(os.path.join(second_stage_result_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + ".jpg"))
 
 
 
 
                                 person_numpy=255.*rearrange(un_norm(person[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 person_img = Image.fromarray(person_numpy.astype(np.uint8))
-                                person_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_person.jpg"))     
+                                person_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_person.jpg"))     
 
                                 ref_img=255.*rearrange(un_norm(ref_list[0][i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 ref_img = Image.fromarray(ref_img.astype(np.uint8))
-                                ref_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_garment.jpg"))
+                                ref_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_garment.jpg"))
 
 
 
                                 bbox_inpaint_person_numpy=255.*rearrange(un_norm(bbox_inpaint_person[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 bbox_inpaint_person_img = Image.fromarray(bbox_inpaint_person_numpy.astype(np.uint8))
-                                bbox_inpaint_person_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_bbox_inpaint.jpg"))
+                                bbox_inpaint_person_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_bbox_inpaint.jpg"))
 
                                 bbox_mask_numpy=255.*rearrange(un_norm(bbox_mask[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 bbox_mask_numpy= cv2.cvtColor(bbox_mask_numpy,cv2.COLOR_GRAY2RGB)
                                 bbox_mask_img = Image.fromarray(bbox_mask_numpy.astype(np.uint8))
-                                bbox_mask_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_bbox_mask.jpg"))
+                                bbox_mask_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_bbox_mask.jpg"))
 
                                 predicted_mask_before_dilate_inpaint_numpy = 255. * rearrange(un_norm(predicted_mask_before_dilate_inpaint_tensor[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 predicted_mask_before_dilate_inpaint_img = Image.fromarray(predicted_mask_before_dilate_inpaint_numpy.astype(np.uint8))
-                                predicted_mask_before_dilate_inpaint_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_predicted_mask_before_dilate_inpaint.jpg"))
+                                predicted_mask_before_dilate_inpaint_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_predicted_mask_before_dilate_inpaint.jpg"))
 
 
 
@@ -613,45 +614,45 @@ def main():
                                 predicted_mask_before_dilate_numpy=255.*rearrange(un_norm(predicted_mask_before_dilate_tensor[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 predicted_mask_before_dilate_numpy= cv2.cvtColor(predicted_mask_before_dilate_numpy,cv2.COLOR_GRAY2RGB)
                                 predicted_mask_before_dilate_img = Image.fromarray(predicted_mask_before_dilate_numpy.astype(np.uint8))
-                                predicted_mask_before_dilate_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_predicted_mask_before_dilate.jpg"))
+                                predicted_mask_before_dilate_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_predicted_mask_before_dilate.jpg"))
     
 
                                 predicted_mask_inpaint_numpy=255.*rearrange(un_norm(predicted_mask_inpaint_tensor[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 predicted_mask_inpaint_img = Image.fromarray(predicted_mask_inpaint_numpy.astype(np.uint8))
-                                predicted_mask_inpaint_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_predicted_mask_inpaint.jpg"))
+                                predicted_mask_inpaint_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_predicted_mask_inpaint.jpg"))
 
                                 predicted_mask_numpy=255.*rearrange(un_norm(predicted_mask_tensor[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 predicted_mask_numpy= cv2.cvtColor(predicted_mask_numpy,cv2.COLOR_GRAY2RGB)
                                 predicted_mask_img = Image.fromarray(predicted_mask_numpy.astype(np.uint8))
-                                predicted_mask_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_predicted_mask.jpg"))
+                                predicted_mask_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_predicted_mask.jpg"))
 
 
                                 garment_mask_numpy=255.*rearrange(un_norm(garment_mask[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 garment_mask_numpy= cv2.cvtColor(garment_mask_numpy,cv2.COLOR_GRAY2RGB)
                                 garment_mask_img = Image.fromarray(garment_mask_numpy.astype(np.uint8))
-                                garment_mask_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_garment_mask.jpg"))
+                                garment_mask_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_garment_mask.jpg"))
                  
 
                                 predicted_mask_unioned_inpaint_numpy=255.*rearrange(un_norm(predicted_mask_unioned_inpaint_tensor[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 predicted_mask_unioned_inpaint_img = Image.fromarray(predicted_mask_unioned_inpaint_numpy.astype(np.uint8))
-                                predicted_mask_unioned_inpaint_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_predicted_mask_unioned_inpaint.jpg"))
+                                predicted_mask_unioned_inpaint_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_predicted_mask_unioned_inpaint.jpg"))
 
                                 predicted_mask_unioned_numpy=255.*rearrange(un_norm(predicted_mask_unioned_tensor[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 predicted_mask_unioned_numpy= cv2.cvtColor(predicted_mask_unioned_numpy,cv2.COLOR_GRAY2RGB)
                                 predicted_mask_unioned_img = Image.fromarray(predicted_mask_unioned_numpy.astype(np.uint8))
-                                predicted_mask_unioned_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_predicted_mask_unioned.jpg"))
+                                predicted_mask_unioned_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_predicted_mask_unioned.jpg"))
                                 
                                 
   
 
                                 posemap_numpy=255.*rearrange(un_norm(posemap[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 posemap_img = Image.fromarray(posemap_numpy.astype(np.uint8))
-                                posemap_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_posemap.jpg"))
+                                posemap_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_posemap.jpg"))
 
 
                                 densepose_numpy=255.*rearrange(un_norm(densepose[i]).cpu(), 'c h w -> h w c').cpu().numpy()
                                 densepose_img = Image.fromarray(densepose_numpy.astype(np.uint8))
-                                densepose_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4]+"_densepose.jpg"))
+                                densepose_img.save(os.path.join(second_stage_middle_figure_path, image_name[i][:-4] + "_" + cloth_name[i][:-4] + "_densepose.jpg"))
 
     print(f"Your samples are ready and waiting for you here: \n{outpath} \n"
           f" \nEnjoy.")

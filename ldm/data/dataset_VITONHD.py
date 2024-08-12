@@ -124,7 +124,7 @@ class try_on_dataset_VITONHD(data.Dataset):
                 self.source_dir.append(os.path.join(dataroot, "image", im_name))
                 self.segment_map_dir.append(os.path.join(dataroot, "image-parse-v3", im_name.replace('.jpg', '.png')))
                 self.ref_dir.append(os.path.join(dataroot, "cloth", c_name))
-                self.pose_dir.append(os.path.join(dataroot, "openpose_img", im_name.replace('.jpg', '_rendered.png')))
+                self.pose_dir.append(os.path.join(dataroot, "openpose_img", im_name.split(".")[0]+'_rendered.png'))
                 self.densepose_dir.append(os.path.join(dataroot, "image-densepose", im_name))
 
 
@@ -270,6 +270,7 @@ class try_on_dataset_VITONHD(data.Dataset):
         
         # image_name
         image_name = os.path.split(source_path)[-1]
+        cloth_name = os.path.split(ref_path)[-1]
 
 
 
@@ -282,6 +283,7 @@ class try_on_dataset_VITONHD(data.Dataset):
             "posemap": pose_combined,
             "densepose": densepose_combined,
             "ref_list": ref_tensors,
+            "cloth_name": cloth_name
         }
 
     def __len__(self):

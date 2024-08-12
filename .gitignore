@@ -1,5 +1,6 @@
 __pycache__
 checkpoints
+datasets/*
 datasets/VITONHD/test
 datasets/VITONHD/train
 datasets/VITONHD/validation
